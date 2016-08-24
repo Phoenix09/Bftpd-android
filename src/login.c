@@ -665,7 +665,7 @@ char *check_file_password(char *my_filename, char *my_username, char *my_passwor
 {
    FILE *my_file;
    int found_user = 0;
-   char user[33], password[33], group[33], home_dir[65];
+   char user[33], password[1025], group[33], home_dir[65];
    char *my_home_dir = NULL;
    int return_value;
 
@@ -673,13 +673,13 @@ char *check_file_password(char *my_filename, char *my_username, char *my_passwor
    if (! my_file)
       return NULL;
 
-   return_value = fscanf(my_file, "%32s %32s %32s %64s", user, password, group, home_dir);
+   return_value = fscanf(my_file, "%32s %1024s %32s %64s", user, password, group, home_dir);
    if (! strcmp(user, my_username) )
       found_user = 1;
 
    while ( (! found_user) && ( return_value != EOF) )
    {
-       return_value = fscanf(my_file, "%32s %32s %32s %64s", user, password, group, home_dir);
+       return_value = fscanf(my_file, "%32s %1024s %32s %64s", user, password, group, home_dir);
        if (! strcmp(user, my_username) )
           found_user = 1;
    }
@@ -691,8 +691,12 @@ char *check_file_password(char *my_filename, char *my_username, char *my_passwor
       if (! strcmp(password, "*") )
       {
       }
-      else if ( strcmp(password, my_password) )
-         return NULL;
+      else
+      {
+         char *result = crypt(my_password, password);
+         if (strcmp(result, password) != 0)
+            return NULL;
+      }
 
       my_home_dir = calloc( strlen(home_dir) + 1, sizeof(char) );
       if (! my_home_dir)
