@@ -8,7 +8,6 @@ mandir=@mandir@
 sbindir=@sbindir@
 sysconfdir=@sysconfdir@
 localstatedir=@localstatedir@
-DESTDIR=@DESTDIR@
 DIRPAX=@DIRPAX@
 PAX=@PAX@
 
