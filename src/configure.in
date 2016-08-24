@@ -63,29 +63,44 @@ fi
 AC_MSG_RESULT($result)
 ])
 
-ARG_ENABLE_BFTPD(pam, [  --enable-pam            Enable PAM (pluggable authentication modules) support], AC_DEFINE(WANT_PAM))
-if test "$result" = "yes"; then
-  LIBS="$LIBS -lpam -ldl"
-  AC_CHECK_HEADERS(security/pam_appl.h, result=yes, result=no)
-  if test "$result" = "no"; then
-    echo "Error: PAM header files not found. Install PAM or don't compile"
-    echo "       bftpd with PAM support."
-    exit 1
-  fi
-fi
+AC_ARG_ENABLE(pam,
+	[AS_HELP_STRING([--enable-pam],[Enable PAM (pluggable authentication modules) support])],
+	[
+		if test "x$enableval" = "xyes"; then
+			AC_CHECK_LIB(pam, pam_authenticate, , AC_MSG_ERROR([*** PAM missing - install first or check config.log ***]))
+			AC_MSG_NOTICE(Enabling PAM)
+			AC_CHECK_FUNCS(pam_fail_delay)
+			AC_DEFINE(WANT_PAM)
+			LIBS="$LIBS -lpam -ldl"
+		else
+			AC_MSG_NOTICE(Disabling PAM)
+		fi
+	],
+	[
+		AC_MSG_NOTICE(Disabling PAM)
+	]
+)
 
-ARG_ENABLE_BFTPD(libz, [  --enable-libz           Link against libz so that gzip on the fly is supported],true)
-if test "$result" = "yes"; then
-    AC_CHECK_HEADERS(zlib.h, result=yes, result=no)
-    if test "$result" = "yes"; then
-        AC_DEFINE(WANT_GZIP)
-        LIBS="$LIBS -lz"
-    else
-        echo "Error: zlib header file not found. Install it or don't compile"
-        echo "       bftpd with zlib support."
-        exit 1
-    fi
-fi
+AC_ARG_ENABLE(libz,
+	[AS_HELP_STRING([--enable-libz],[Link against libz so that gzip on the fly is supported])],
+	[
+		if test "x$enableval" = "xyes"; then
+			AC_CHECK_HEADERS(zlib.h, result=yes, result=no)
+			if test "x$result" = "xyes"; then
+				AC_MSG_NOTICE(Enabling libz)
+				AC_DEFINE(WANT_GZIP)
+				LIBS="$LIBS -lz"
+			else
+				AC_MSG_ERROR([*** libz missing - install first or check config.log ***])
+			fi
+		else
+			AC_MSG_NOTICE(Disabling libz)
+		fi
+	],
+	[
+		AC_MSG_NOTICE(Disabling libz)
+	]
+)
 
 AC_ARG_ENABLE(pax, [  --enable-pax            Specify path to PAX sources], result=$enableval, result="")
 if test ! "$result" = ""; then
