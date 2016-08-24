@@ -1,13 +1,13 @@
-# Generated automatically from Makefile.in by configure.
 VERSION=4.4
-CC?=gcc
+CC?=aarch64-linux-gnu-gcc
 INSTALL=/usr/bin/install -c
-prefix=/usr
-CFLAGS=-g -O2 -DHAVE_CONFIG_H -Wall -I. -DVERSION=\"$(VERSION)\" -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPREFIX=\"$(prefix)\" 
+prefix=/data/local/bftpd
+CFLAGS=-static -static-libgcc -DHAVE_CONFIG_H -Wall -I. -DVERSION=\"$(VERSION)\" -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPREFIX=\"$(prefix)\" 
 LIBS= -lcrypt
-mandir=${prefix}/man
-sbindir=${exec_prefix}/sbin
-DESTDIR=
+mandir=/data/local/bftpd
+sbindir=/data/local/bftpd
+sysconfdir=/data/local/bftpd
+localstatedir=/data/local/bftpd
 DIRPAX=
 PAX=
 
@@ -16,7 +16,7 @@ OBJS=bftpdutmp.o commands.o commands_admin.o cwd.o dirlist.o list.o login.o logg
 SRCS=bftpdutmp.c commands.c commands_admin.c cwd.c dirlist.c list.c login.c logging.c main.c mystring.c options.c md5.c
 
 OBJS2LINK=$(OBJS) $(PAX)
-LDFLAGS=
+LDFLAGS=-static -s
 
 all: bftpd
 
@@ -27,18 +27,17 @@ bftpd: $(OBJS)
 $(OBJS): $(HEADERS) Makefile
 
 install: all
-	mkdir -p $(DESTDIR)/$(prefix)/sbin
-	$(INSTALL) -g 0 -m 700 -o 0 bftpd $(DESTDIR)/$(prefix)/sbin
+	mkdir -p $(DESTDIR)/$(sbindir)
+	$(INSTALL) -m 700 bftpd $(DESTDIR)/$(sbindir)
 	mkdir -p $(DESTDIR)/$(mandir)/man8
-	$(INSTALL) -g 0 -m 644 -o 0 bftpd.8 $(DESTDIR)/$(mandir)/man8
-	mkdir -p $(DESTDIR)/$(prefix)/etc
-	[ -f $(DESTDIR)/$(prefix)/etc/bftpd.conf ] || \
-		$(INSTALL) -g 0 -m 600 -o 0 bftpd.conf $(DESTDIR)/$(prefix)/etc
-	mkdir -p $(DESTDIR)/$(prefix)/var/log
-	touch $(DESTDIR)/$(prefix)/var/log/bftpd.log
-	chmod 644 $(DESTDIR)/$(prefix)/var/log/bftpd.log
-	mkdir -p $(DESTDIR)/$(prefix)/var/run/bftpd
-	chmod 755 $(DESTDIR)/$(prefix)/var/run/bftpd
+	$(INSTALL) -m 644 bftpd.8 $(DESTDIR)/$(mandir)/man8
+	mkdir -p $(DESTDIR)/$(sysconfdir)
+	[ -f $(DESTDIR)/$(sysconfdir)/bftpd.conf ] || \
+		$(INSTALL) -m 600 bftpd.conf $(DESTDIR)/$(sysconfdir)
+	touch $(DESTDIR)/$(prefix)/bftpd.log
+	chmod 644 $(DESTDIR)/$(prefix)/bftpd.log
+	mkdir -p $(DESTDIR)/$(localstatedir)
+	chmod 755 $(DESTDIR)/$(localstatedir)
 
 clean distclean:
 	rm -f *~ $(OBJS) bftpd mksources.finished config.cache
