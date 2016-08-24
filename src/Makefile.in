@@ -34,7 +34,6 @@ install: all
 	mkdir -p $(DESTDIR)/$(sysconfdir)
 	[ -f $(DESTDIR)/$(sysconfdir)/bftpd.conf ] || \
 		$(INSTALL) -m 600 bftpd.conf $(DESTDIR)/$(sysconfdir)
-	mkdir -p $(DESTDIR)/$(prefix)/var/log
 	touch $(DESTDIR)/$(prefix)/bftpd.log
 	chmod 644 $(DESTDIR)/$(prefix)/bftpd.log
 	mkdir -p $(DESTDIR)/$(localstatedir)
