@@ -8,7 +8,7 @@ $ ./build.sh <ARCH>
 ## Running
 1. Push bftpd directory to `/data/local`
 2. Edit `bftpd.conf` as required  
-    Users are specified in `/data/local/bftpd/ftpdpasswd`  
+    Users are specified in `/data/local/bftpd/ftpdpassword`  
 ```
   # The format of this file is as shown below:
   # username crypt_password group home_folder
